@@ -5,46 +5,81 @@ using namespace std;
 struct dll
 {
     string judul;
-    string bintangTamu;
+    string channel;
     int durasi;
     dll *next;
     dll *prev;
 };
 
 dll *head = NULL;
+dll *curr_podcast = NULL;
 dll *tail = NULL;
 
-void tambahDepan(string judul, string bintangTamu, int durasi);
-void tambahTengah(string judul, string bintangTamu, int durasi, int posisi);
-void tambahBelakang(string judul, string bintangTamu, int durasi);
+
+// void tambahDepan(string judul, string channel, int durasi);
+// void tambahTengah(string judul, string channel, int durasi, int posisi);
+void tambahBelakang(string judul, string channel, int durasi);
 void hapusDepan();
 void hapusTengah(int posisi);
 void hapusBelakang();
 void cariData(string judul);
 void tampilDepan();
 // void tampilDurasi();
-void tampilBelakang();
+// void tampilBelakang();
 
 //1. Menambah Data otomatis Terurut
-void sortByDurasi();
+// void sortByDurasi();
 
-// 2.
+// mainkan podcast pertama
+void firstNode(){
+    if(head==NULL){
+        cout << "Playlist masih kosong\n";
+    }
+    else{
+        cout << "Memainkan Podcast pertama : " << head->judul << endl;
+    }
+}
+
+void nextNode(){
+    if(curr_podcast==NULL){
+        cout << "Tidak ada lagu di playlist\n";
+    }
+    else{
+        curr_podcast=curr_podcast->next;
+        cout << "Memainkan lagu selanjutnya : " << curr_podcast->judul << endl;
+    }
+}
+
+void prevNode(){
+    if(curr_podcast==NULL){
+        cout << "Tidak ada lagu di playlist!\n";
+    }
+    else{
+        curr_podcast=curr_podcast->prev;
+        cout << "Memainkan lagu sebelumnya : " << curr_podcast->judul << endl;
+    }
+}
 
 int main()
 {
     int pilih,value;
-    string judul, bintangTamu;
+    string judul, channel;
     int durasi;
 
-    tambahDepan("bisnis gedang klutuk", "fata dwi", 10);
-    tambahDepan("bisnis milenial", "luthfi", 20);
-    tambahDepan("nasa buka cabang di indonesia", "elon mas", 60);
-    tambahBelakang("panutan remaja sekarang", "kekeye", 120);
-    tambahTengah("tiba-tiba judi", "raditya dika", 45, 3);
+    tambahBelakang("bisnis gedang klutuk", "PODKESMAS", 10);
+    tambahBelakang("bisnis milenial", "Close the Door", 20);
+    tambahBelakang("nasa buka cabang di indonesia", "Makna Talks", 60);
+    tambahBelakang("panutan remaja sekarang", "Rintik sedu", 120);
+    tampilDepan();
+    // tambahTengah("tiba-tiba judi", "Vindes", 45, 3);
     tampilDepan();
 
-    hapusTengah(8);
+    hapusTengah(4);
     tampilDepan();
+
+    firstNode();
+    nextNode();
+    prevNode();
     // tampilDurasi();
 
     // do{
@@ -104,11 +139,11 @@ int main()
     return 0;
 }
 
-void tambahDepan(string judul, string bintangTamu, int durasi){
+void tambahDepan(string judul, string channel, int durasi){
     dll *baru = new dll;
     
     baru->judul = judul;
-    baru->bintangTamu = bintangTamu;
+    baru->channel = channel;
     baru->durasi = durasi;
     
     baru->next = NULL;
@@ -129,14 +164,14 @@ void tambahDepan(string judul, string bintangTamu, int durasi){
     cout << "Data " << judul << " Masuk di Depan!\n";
 }
 
-void tambahTengah(string judul, string bintangTamu, int durasi, int posisi){
+void tambahTengah(string judul, string channel, int durasi, int posisi){
     dll *baru = new dll;
     dll *bantu = new dll;
     dll *cur = new dll;
 
 
     baru->judul = judul;
-    baru->bintangTamu = bintangTamu;
+    baru->channel = channel;
     baru->durasi = durasi;
     baru->next = NULL;
     baru->prev = NULL;
@@ -179,11 +214,11 @@ void tambahTengah(string judul, string bintangTamu, int durasi, int posisi){
 }
 
 
-void tambahBelakang(string judul, string bintangTamu, int durasi){
+void tambahBelakang(string judul, string channel, int durasi){
     dll *baru = new dll;
 
     baru->judul = judul;
-    baru->bintangTamu = bintangTamu;
+    baru->channel = channel;
     baru->durasi = durasi;
     baru->next = NULL;
     baru->prev = NULL;
@@ -195,6 +230,8 @@ void tambahBelakang(string judul, string bintangTamu, int durasi){
         head->prev = head;
         tail->next = tail;
         tail->prev = tail;
+        curr_podcast = head;
+
     }else{
         tail->next = baru;
         baru->prev = tail;
@@ -300,8 +337,8 @@ void tampilDepan(){
         cout << "Data Masih!!!\n";
     }else{
         do{
-            cout << "Judul : " << bantu->judul << endl;
-            cout << "Bintang Tamu : " << bantu->bintangTamu<< endl;
+            cout << "Judul Podcast : " << bantu->judul << endl;
+            cout << "Channel Podcast : " << bantu->channel<< endl;
             cout << "Durasi : " << bantu->durasi << " menit" << endl << endl;
             bantu = bantu->next;
         }while (bantu!=head);   
@@ -357,7 +394,7 @@ void tampilBelakang(){
     }else{
         do{
             cout << bantu->judul << endl;
-            cout << bantu->bintangTamu<< endl;
+            cout << bantu->channel<< endl;
             cout << bantu->durasi << endl;
             bantu = bantu->prev;
         }while (bantu!=tail);
