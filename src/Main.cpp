@@ -16,19 +16,17 @@ Podcast *head = NULL;
 Podcast *curr_podcast = NULL;
 Podcast *tail = NULL;
 
-void tambahDepan(string judul, string channel, int durasi);
 void tambahPodcast(string judul, string channel, int durasi); // tambah podcast
-void hapusDepan(); // hapus podcast teratas
+void hapusDepan(); // hapus podcast pertama
 void hapusPodcast(int posisi); //  hapus podcast sesuai urutan tampilan
-void hapusBelakang();// hapus podcast belakang
-void tampilDepan();
-void tampilBelakang(); // 
+void tampil();
 
 // play podcast
 // void cariData(string judul); // ganti putar podcast spesifik || playSpesifik
 void playFirst();
 void nextPodcast();
 void prevPodcast();
+void playLast();
 void playPodcast(int value);
 
 int main()
@@ -51,8 +49,9 @@ int main()
         cout << "= 3. Mainkan Podcast urutan Pertama \n";
         cout << "= 4. Mainkan Podcast Selanjutnya \n";
         cout << "= 5. Mainkan Podcast Sebelumnya \n";
-        cout << "= 6. Mainkan Podcast dengan urutan \n";
-        cout << "= 6. Tampil Urutan Podcast \n";
+        cout << "= 6. Mainkan Podcast urutan terakhir \n";
+        cout << "= 7. Mainkan Podcast dengan urutan \n";
+        cout << "= 8. Tampil Urutan Podcast \n";
         cout << "===========================================\n";
         cin >> pilih;
         if (pilih == 1){
@@ -63,7 +62,7 @@ int main()
             tambahPodcast(judul, channel, durasi);
         }else if(pilih == 2){
             system("clear");
-            tampilDepan();
+            tampil();
             cout << "Hapus Podcast dengan urutan ke? "; cin >> value;
             hapusPodcast(value);
         }else if(pilih == 3){
@@ -77,41 +76,20 @@ int main()
             prevPodcast();
         }else if(pilih == 6){
             system("clear");
-            cout << "Mainkan Podcast dengan urutan ke? "; cin >> value;
-            playPodcast(value);
+            playLast();
         }else if(pilih == 7){
             system("clear");
-            tampilDepan();
+            tampil();
+            cout << "Mainkan Podcast dengan urutan ke? "; cin >> value;
+            playPodcast(value);
+        }else if(pilih == 8){
+            system("clear");
+            tampil();
         }
         
     }while(pilih!=10);
     
     return 0;
-}
-
-void tambahDepan(string judul, string channel, int durasi){
-    Podcast *baru = new Podcast;
-    
-    baru->judul = judul;
-    baru->channel = channel;
-    baru->durasi = durasi;
-    
-    baru->next = NULL;
-    baru->prev = NULL;
-    
-    if(head == NULL){
-        head = baru;
-        tail = baru;
-        tail->next = head;
-        head->prev = tail;
-    }else{
-        baru->next = head;
-        head->prev = baru;
-        head = baru;
-        tail->next = head;
-        head->prev = tail;
-    }
-    cout << "Data " << judul << " Masuk di Depan!\n";
 }
 
 void tambahPodcast(string judul, string channel, int durasi){
@@ -190,58 +168,19 @@ void hapusPodcast(int posisi){
                 cur = cur->next;
                 nomor++;
             }
-
             hapus = cur->next;
             bantu = hapus->next;
             cur->next = bantu;
             bantu->prev = cur;
+            cout << "podcast " << hapus->judul << " Terhapus\n";
             delete hapus;
         }
     }
 }
 
-void hapusBelakang(){
-    Podcast *hapus = new Podcast;
-    int d;
-    if(head){
-        if(head != tail){
-            hapus = tail;
-            d = tail->durasi;
-            tail = tail->prev;
-            tail->next = head;
-            head->prev = tail;
-            delete hapus;
-        }else{
-            d = head->durasi;
-            head = NULL;
-            tail = NULL;
-        }
-        cout << "Data " << d << " Terhapus";
-    }else{
-        cout << "Data Masih Kosong!\n";
-    }
-}
-
-void cariData(string judul){
+void tampil(){
     Podcast *bantu = new Podcast;
-
     bantu=head;
-    do{
-        if(judul == bantu->judul){
-            cout << "Data " << judul << " Ketemu!!!\n";
-        }
-
-        bantu = bantu->next;
-    }while(bantu!=head);
-}
-
-void tampilDepan(){
-    Podcast *bantu;
-    bantu=head;
-    // while(bantu->next != head){
-    //     cout << bantu->nilai << endl;
-    //     bantu->next = bantu;
-    // }
     cout << "===================================\n";
     if(head == NULL){
         cout << "Data Masih kosong!!!\n";
@@ -254,26 +193,6 @@ void tampilDepan(){
         }while (bantu!=head);   
     }
     cout << "==================================\n";
-    
-    
-}
-
-void tampilBelakang(){
-    Podcast *bantu;
-    bantu=tail;
-
-    cout << "==============\n";
-    if(tail == NULL){
-        cout << "Data Masih Kosong!!!\n";
-    }else{
-        do{
-            cout << "Judul : " << bantu->judul << endl;
-            cout << "Channel : " << bantu->channel<< endl;
-            cout << "Durasi : " << bantu->durasi << endl;
-            bantu = bantu->prev;
-        }while (bantu!=tail);
-    }
-    cout << "\n==============\n";
 }
 
 void playFirst(){
@@ -297,7 +216,7 @@ void nextPodcast(){
     else{
         curr_podcast=curr_podcast->next;
         cout << "=================================================\n";
-        cout << "Memainkan Podcast Sebelumnya\n";
+        cout << "Memainkan Podcast Selanjutnya\n";
         cout << "=================================================\n";
         cout << curr_podcast->judul << endl;
         cout << curr_podcast->channel << endl;
@@ -321,18 +240,29 @@ void prevPodcast(){
         cout << "=================================================\n";
     }
 }
+void playLast(){
+    if(head==NULL){
+        cout << "Playlist masih kosong\n";
+    }else{
+        cout << "=================================================\n";
+        cout << "Memainkan Podcast Terakhir\n";
+        cout << "=================================================\n";
+        cout << head->prev->judul << endl;
+        cout << head->prev->channel << endl;
+        cout << "00:00 ●━━━━━━━━━━━━ " << head->prev->durasi << ":00" << endl;
+        cout << "=================================================\n";
+    }
+}
 
 void playPodcast(int posisi){
         curr_podcast = head;
     
         int nomor = 1;
 
-        // tranversing
         while(nomor < posisi ){
             curr_podcast = curr_podcast->next;
             nomor++;
         }
-
         cout << "=================================================\n";
         cout << "Memainkan Podcast " << curr_podcast->judul << endl;
         cout << "=================================================\n";
@@ -340,5 +270,4 @@ void playPodcast(int posisi){
         cout << curr_podcast->channel << endl;
         cout << "00:00 ●━━━━━━━━━━━━ " << curr_podcast->durasi << ":00" << endl;
         cout << "=================================================\n";
-    
 }
